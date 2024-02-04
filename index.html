@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assinatura de Email</title>
+  <!-- Inclua as bibliotecas necessárias -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+<form id="signatureForm">
+  <label for="name">Nome:</label>
+  <input type="text" id="name" name="name" autocomplete="name" required>
+  <br>
+  <label for="social">Redes Sociais:</label>
+  <input type="text" id="social" name="social" autocomplete="off" required>
+  <br>
+  <button type="button" onclick="generateSignature()">Gerar Assinatura</button>
+</form>      
+
+<div id="signatureContainer" style="position: relative;"></div>
+
+<script>
+  function generateSignature() {
+    const name = document.getElementById('name').value;
+    const social = document.getElementById('social').value;
+
+    const signatureContainer = document.getElementById('signatureContainer');
+
+    // Criar um canvas para a imagem de fundo
+    const backgroundCanvas = document.createElement('canvas');
+    backgroundCanvas.width = 400; // Largura da imagem em pixels
+    backgroundCanvas.height = 100; // Altura da imagem em pixels
+
+    // Adicionar imagem de fundo ao canvas (substitua 'teste.jpg' pelo caminho da sua imagem de fundo)
+    const backgroundCtx = backgroundCanvas.getContext('2d');
+    const backgroundImage = new Image();
+    backgroundImage.src = "teste.jpg";
+    backgroundCtx.drawImage(backgroundImage, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+
+    // Defina a fonte para o nome
+    backgroundCtx.font = 'bold 16px "Rule One Display", sans-serif'; // Exemplo: fonte em negrito, tamanho 16px, Rule One Display
+    backgroundCtx.fillStyle = '#efe9d7'; // Cor do texto
+
+    // Posicione o texto no canto superior direito com espaçamento manual entre as letras
+    const letterSpacing = 1; // Espaçamento manual entre as letras
+    let xPos = backgroundCanvas.width - 10;
+
+    for (let i = name.length - 1; i >= 0; i--) {
+      const letter = name[i];
+      const letterWidth = backgroundCtx.measureText(letter).width;
+      xPos -= letterWidth + letterSpacing;
+      backgroundCtx.fillText(letter, xPos, 33);
+    }
+
+    // Defina a fonte para as redes sociais
+    backgroundCtx.font = 'italic 14px "Basic Sans Regular", sans-serif'; // Exemplo: fonte em itálico, tamanho 14px, Basic Sans Regular
+    const socialWidth = backgroundCtx.measureText(social).width;
+
+    // Posicione o texto das redes sociais à direita, abaixo do nome
+    backgroundCtx.fillText(social, backgroundCanvas.width - socialWidth - 10, 53);
+
+    // Exibir a imagem de fundo com texto
+    const img = document.createElement('img');
+    img.src = backgroundCanvas.toDataURL('image/png');
+
+    // Adicionar a imagem ao container
+    signatureContainer.innerHTML = '';
+    signatureContainer.appendChild(img);
+  }
+</script>
+
+</body>
+</html>
